@@ -984,6 +984,7 @@ class DropdownButton<T> extends StatefulWidget {
     this.iconSize = 24.0,
     this.isDense = false,
     this.isExpanded = false,
+    this.isWidthFixed = true,
     this.itemHeight = kMinInteractiveDimension,
     this.menuWidth,
     this.focusColor,
@@ -1032,6 +1033,7 @@ class DropdownButton<T> extends StatefulWidget {
     this.iconSize = 24.0,
     this.isDense = false,
     this.isExpanded = false,
+    this.isWidthFixed = true,
     this.itemHeight = kMinInteractiveDimension,
     this.menuWidth,
     this.focusColor,
@@ -1202,6 +1204,12 @@ class DropdownButton<T> extends StatefulWidget {
   /// If [isExpanded] is true, the inner width is expanded to fill its
   /// surrounding container.
   final bool isExpanded;
+
+  /// Set the dropdown's width to be fixed.
+  ///
+  /// By default this button's inner width is the width of the menu.
+  /// If [isWidthFixed] is false, the dropdown's width is the width of the current value.
+  final bool isWidthFixed;
 
   /// If null, then the menu item heights will vary according to each menu item's
   /// intrinsic height.
@@ -1531,6 +1539,8 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
     final Widget innerItemsWidget;
     if (items.isEmpty) {
       innerItemsWidget = const SizedBox.shrink();
+    } else if (!widget.isWidthFixed) {
+      innerItemsWidget = items[_selectedIndex ?? hintIndex ?? 0];
     } else {
       innerItemsWidget = IndexedStack(
         index: _selectedIndex ?? hintIndex,
@@ -1712,6 +1722,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
     double iconSize = 24.0,
     bool isDense = true,
     bool isExpanded = false,
+    bool isWidthFixed = true,
     double? itemHeight,
     Color? focusColor,
     FocusNode? focusNode,
@@ -1789,6 +1800,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
                      iconSize: iconSize,
                      isDense: isDense,
                      isExpanded: isExpanded,
+                     isWidthFixed: isWidthFixed,
                      itemHeight: itemHeight,
                      focusColor: focusColor,
                      focusNode: focusNode,

@@ -51,6 +51,7 @@ Widget buildDropdown({
   double iconSize = 24.0,
   bool isDense = false,
   bool isExpanded = false,
+  bool isWidthFixed = true,
   Widget? hint,
   Widget? disabledHint,
   Widget? underline,
@@ -121,6 +122,7 @@ Widget buildDropdown({
     iconEnabledColor: iconEnabledColor,
     isDense: isDense,
     isExpanded: isExpanded,
+    isWidthFixed: isWidthFixed,
     underline: underline,
     focusNode: focusNode,
     autofocus: autofocus,
@@ -147,6 +149,7 @@ Widget buildFrame({
   double iconSize = 24.0,
   bool isDense = false,
   bool isExpanded = false,
+  bool isWidthFixed = true,
   Widget? hint,
   Widget? disabledHint,
   Widget? underline,
@@ -191,6 +194,7 @@ Widget buildFrame({
               iconEnabledColor: iconEnabledColor,
               isDense: isDense,
               isExpanded: isExpanded,
+              isWidthFixed: isWidthFixed,
               underline: underline,
               focusNode: focusNode,
               autofocus: autofocus,
@@ -4380,5 +4384,36 @@ void main() {
     // dropdowns with padding should be that much larger than with no padding
     expect(noPaddingSize.height, equals(paddedSize.height - padVertical * 2));
     expect(noPaddingSize.width, equals(paddedSize.width - padHorizontal * 2));
+  });
+
+  testWidgets('Dropdown width remains constant when isWidthFixed is true', (
+    WidgetTester tester,
+  ) async {
+    final Key buttonKey = UniqueKey();
+
+    await tester.pumpWidget(buildFrame(buttonKey: buttonKey, value: 'one'));
+    RenderBox buttonBox = tester.renderObject<RenderBox>(find.byKey(buttonKey));
+    final Size oneSize = Size.copy(buttonBox.size);
+
+    await tester.pumpWidget(buildFrame(buttonKey: buttonKey, value: 'three'));
+    buttonBox = tester.renderObject<RenderBox>(find.byKey(buttonKey));
+    final Size threeSize = Size.copy(buttonBox.size);
+    expect(oneSize.width, equals(threeSize.width));
+  });
+
+  testWidgets('Dropdown width adjusts to value when isWidthFixed is false', (
+    WidgetTester tester,
+  ) async {
+    final Key buttonKey = UniqueKey();
+
+    await tester.pumpWidget(buildFrame(buttonKey: buttonKey, value: 'one', isWidthFixed: false));
+    RenderBox buttonBox = tester.renderObject<RenderBox>(find.byKey(buttonKey));
+    final Size oneSize = Size.copy(buttonBox.size);
+
+    await tester.pumpWidget(buildFrame(buttonKey: buttonKey, value: 'three', isWidthFixed: false));
+    buttonBox = tester.renderObject<RenderBox>(find.byKey(buttonKey));
+    final Size threeSize = Size.copy(buttonBox.size);
+
+    expect(oneSize.width, isNot(equals(threeSize.width)));
   });
 }
